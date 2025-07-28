@@ -8,6 +8,7 @@ from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+import requests
 
 def index(request):
     return render(request, 'index.html')
@@ -30,8 +31,28 @@ def chat_detail(request, chat_id):
         text = request.POST.get('text')
         if text:
             Message.objects.create(chat=chat, sender='user', text=text, timestamp=timezone.now())
-            # Hier könnte die KI-Antwort generiert werden (Platzhalter):
-            Message.objects.create(chat=chat, sender='ai', text='[KI-Antwort Platzhalter]', timestamp=timezone.now())
+            # LM Studio API-Aufruf
+            lm_messages = [
+                {"role": "user" if m.sender == "user" else "assistant", "content": m.text}
+                for m in chat.messages.order_by('timestamp')
+            ]
+            try:
+                response = requests.post(
+                    "http://localhost:1234/v1/chat/completions",
+                    json={
+                        "model": "local-model",  # Modellname kann ggf. angepasst werden
+                        "messages": lm_messages,
+                        "max_tokens": 512
+                    },
+                    timeout=30
+                )
+                if response.status_code == 200:
+                    ai_content = response.json()["choices"][0]["message"]["content"]
+                else:
+                    ai_content = f"[Fehler von LM Studio: {response.status_code}]"
+            except Exception as e:
+                ai_content = f"[LM Studio nicht erreichbar: {e}]"
+            Message.objects.create(chat=chat, sender='ai', text=ai_content, timestamp=timezone.now())
         return HttpResponseRedirect(reverse('chat_detail', args=[chat.id]))
     return render(request, 'chat_detail.html', {'chat': chat, 'messages': messages})
 
