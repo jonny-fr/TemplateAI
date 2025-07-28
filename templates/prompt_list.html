@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Deine Prompts</h2>
+    <a href="{% url 'create_prompt' %}" class="btn btn-primary mb-3">Neuen Prompt anlegen</a>
+    <a href="{% url 'assign_prompt' %}" class="btn btn-secondary mb-3">Prompt per ID zuweisen</a>
+    <h4>Eigene Prompts</h4>
+    <ul class="list-group mb-4">
+        {% for prompt in prompts %}
+        <li class="list-group-item">
+            <strong>{{ prompt.title }}</strong><br>
+            <small>{{ prompt.content }}</small>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Noch keine eigenen Prompts.</li>
+        {% endfor %}
+    </ul>
+    <h4>Zugewiesene Prompts</h4>
+    <ul class="list-group">
+        {% for up in user_prompts %}
+        <li class="list-group-item">
+            <strong>{{ up.prompt.title }}</strong><br>
+            <small>{{ up.prompt.content }}</small>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Noch keine Prompts zugewiesen.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+

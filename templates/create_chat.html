@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Neuen Chat starten</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">Titel</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <button type="submit" class="btn btn-success">Erstellen</button>
+        <a href="{% url 'chat_list' %}" class="btn btn-secondary">Zurück</a>
+    </form>
+</div>
+{% endblock %}
+

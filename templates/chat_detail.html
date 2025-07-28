@@ -1,0 +1,27 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ chat.title }}</h2>
+    <div class="mb-3">
+        <a href="{% url 'chat_list' %}" class="btn btn-secondary">Zurück zur Übersicht</a>
+    </div>
+    <div class="card mb-3" style="max-height: 400px; overflow-y: auto;">
+        <ul class="list-group list-group-flush">
+            {% for message in messages %}
+            <li class="list-group-item {% if message.sender == 'user' %}text-end{% endif %}">
+                <strong>{{ message.sender|title }}:</strong> {{ message.text }}
+                <br><small class="text-muted">{{ message.timestamp|date:"d.m.Y H:i" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="input-group">
+            <input type="text" name="text" class="form-control" placeholder="Nachricht eingeben..." required>
+            <button class="btn btn-primary" type="submit">Senden</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends 'index.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Prompt per ID zuweisen</h2>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="prompt_id" class="form-label">Prompt-ID</label>
+            <input type="number" class="form-control" id="prompt_id" name="prompt_id" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Zuweisen</button>
+        <a href="{% url 'prompt_list' %}" class="btn btn-secondary">Zurück</a>
+    </form>
+</div>
+{% endblock %}
+
